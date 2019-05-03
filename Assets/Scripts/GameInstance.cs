@@ -6,8 +6,8 @@ public class GameInstance : MonoBehaviour
 {
     static public GameInstance Singleton { get; private set; }
 
-    public VariableManager variableManager;
-    public SequenceManager sequenceManager;
+    public VariableManager VariableManager { get; private set; }
+    public SequenceManager SequenceManager { get; private set; }
 
     void Awake()
     {
@@ -19,5 +19,8 @@ public class GameInstance : MonoBehaviour
 
         Singleton = this;
         DontDestroyOnLoad(gameObject);
+
+        VariableManager = GetComponent<VariableManager>();
+        SequenceManager = GetComponent<SequenceManager>();
     }
 }

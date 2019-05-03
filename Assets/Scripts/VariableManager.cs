@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
 public enum VariableType
 {
@@ -28,20 +29,21 @@ public struct Variable
 
 public class VariableManager : MonoBehaviour
 {
-    Dictionary<string, Dictionary<string, Variable>> variables = new Dictionary<string, Dictionary<string, Variable>>();
+    //Dictionary<string, Dictionary<string, Variable>> variables = new Dictionary<string, Dictionary<string, Variable>>();
+
 
     void Awake()
     {
         // load saved variables into dictionary.
-
-        Dictionary<string, Variable> ownerVar = new Dictionary<string, Variable>();
-        ownerVar.Add("test_v", new Variable() { type = VariableType.String, value = "yes" });
-        variables.Add("test", ownerVar);
+        //Dictionary<string, Variable> ownerVar = new Dictionary<string, Variable>();
+        //ownerVar.Add("test_v", new Variable() { type = VariableType.String, value = "yes" });
+        //variables.Add("test", ownerVar);
 
     }
 
     public Variable GetVariable(string owner, string name)
     {
+        /*
         Dictionary<string, Variable> ownerSet = null;
         if (variables.TryGetValue(owner, out ownerSet))
         {
@@ -49,7 +51,7 @@ public class VariableManager : MonoBehaviour
             if (ownerSet.TryGetValue(name, out variable))
                 return variable;
         }
-
+        */
         return Variable.Invalid;
     }
 

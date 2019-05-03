@@ -26,12 +26,12 @@ public class BranchAction : Action
 {
     public override void OnActivate(Sequence sequence, ActionState state)
     {
-        bool isTrue = GameInstance.Singleton.variableManager.IsVariableTrue(state.branch.test);
+        bool isTrue = GameInstance.Singleton.VariableManager.IsVariableTrue(state.branch.test);
         Sequence branch = isTrue ? state.branch.success : state.branch.failure;
 
         Debug.Log("BranchAction isTrue: " + isTrue + " branch " + branch.name);
         if (branch != null)
-            GameInstance.Singleton.sequenceManager.ActivateSequence(branch);
+            GameInstance.Singleton.SequenceManager.ActivateSequence(branch);
 
         state.Complete(sequence);
     }
