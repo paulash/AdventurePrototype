@@ -5,44 +5,23 @@ using UnityEditor;
 using System.Reflection;
 using System.Linq;
 
-public class SequenceEditor : EditorWindow
+[CustomEditor(typeof(Sequence))]
+public class SequenceEditor : Editor
 {
     Sequence targetSequence = null;
 
     [System.NonSerialized]
-    List<System.Type> actionClasses = null;
+    static List<System.Type> actionClasses = null;
 
     [System.NonSerialized]
-    string[] actionClassNames = null;
+    static string[] actionClassNames = null;
 
     Stack<ActionState> removedStates = new Stack<ActionState>();
     Stack<int> insertState = new Stack<int>();
     Stack<ActionState> cloneState = new Stack<ActionState>();
 
-    Dictionary<string, ActionVariable[]> variablesByType = new Dictionary<string, ActionVariable[]>();
-
-    [MenuItem("Window/Sequence Editor")]
-    static void Init()
-    {
-        // Get existing open window or if none, make a new one:
-        SequenceEditor window = (SequenceEditor)EditorWindow.GetWindow(typeof(SequenceEditor));
-        window.Show();
-    }
-
-    void OnSelectionChange()
-    {
-        if (Selection.activeObject is Sequence)
-        {
-            targetSequence = Selection.activeObject as Sequence;
-            for (int i = 0; i < targetSequence.actionStates.Count; i++)
-                targetSequence.actionStates[i].InitializeVariables();
-        }
-        else
-            targetSequence = null;
-
-        removedStates.Clear();
-        Repaint();
-    }
+    [System.NonSerialized]
+    static Dictionary<string, ActionVariable[]> variablesByType = new Dictionary<string, ActionVariable[]>();
 
     void CollectActionClasses()
     {
@@ -52,6 +31,7 @@ public class SequenceEditor : EditorWindow
         {
             if (!assemblies[a].outputPath.EndsWith("Assembly-CSharp.dll"))
                 continue;
+
 
             actionClasses = new List<System.Type>();
             System.Type[] allTypes = Assembly.LoadFile(assemblies[a].outputPath).GetTypes();
@@ -87,8 +67,10 @@ public class SequenceEditor : EditorWindow
         return actionClassNames[index];
     }
 
-    private void OnGUI()
+    public override void OnInspectorGUI()
     {
+        targetSequence = (Sequence)target;
+
         if (actionClasses == null)
             CollectActionClasses();
 
@@ -102,6 +84,9 @@ public class SequenceEditor : EditorWindow
 
         GUILayout.BeginVertical(GUILayout.MaxWidth(500));
         {
+            if (targetSequence.actionStates.Count == 0)
+                insertState.Push(0);
+
             for (int i = 0; i < targetSequence.actionStates.Count; i++)
             {
                 GUILayout.BeginVertical(GUI.skin.box);
@@ -120,20 +105,35 @@ public class SequenceEditor : EditorWindow
                     GUILayout.EndHorizontal();
 
                     ActionState state = targetSequence.actionStates[i];
-                    state.actionClass = GetActionName(EditorGUILayout.Popup(GetActionIndex(state.actionClass), actionClassNames));
+                    state.ActionClass = GetActionName(EditorGUILayout.Popup(GetActionIndex(state.ActionClass), actionClassNames));
                     state.targetActorName = EditorGUILayout.TextField("Target Actor Name", state.targetActorName);
+
 
                     GUILayout.BeginVertical(GUI.skin.box);
                     {
                         ActionVariable[] variables = null;
-                        if (variablesByType.TryGetValue(state.actionClass, out variables))
+
+                        if (variablesByType.TryGetValue(state.ActionClass, out variables))
                         {
                             for (int v=0; v < variables.Length; v++)
                             {
-                                switch (variables[v].type)
+                                ActionVariable variable = variables[v];
+                                switch (variable.type)
                                 {
                                     case ActionVariableType.Item:
-                                        state.Set(variables[v].name, EditorGUILayout.ObjectField(variables[v].name, state.Get<Item>(variables[v].name), typeof(Item)));
+                                        state.Set(variable, EditorGUILayout.ObjectField(variable.name, state.Get<Item>(variable), typeof(Item), false));
+                                        break;
+                                    case ActionVariableType.Sequence:
+                                        state.Set(variable, EditorGUILayout.ObjectField(variable.name, state.Get<Sequence>(variable), typeof(Sequence), false));
+                                        break;
+                                    case ActionVariableType.Float:
+                                        state.Set(variable, EditorGUILayout.FloatField(variable.name, state.Get<float>(variable)));
+                                        break;
+                                    case ActionVariableType.String:
+                                        state.Set(variable, EditorGUILayout.TextField(variable.name, state.Get<string>(variable)));
+                                        break;
+                                    case ActionVariableType.Vector2:
+                                        state.Set(variable, EditorGUILayout.Vector2Field(variable.name, state.Get<Vector2>(variable)));
                                         break;
                                 }
                             }
@@ -157,5 +157,7 @@ public class SequenceEditor : EditorWindow
             }
         }
         GUILayout.EndVertical();
+
+        DrawDefaultInspector();
     }
 }

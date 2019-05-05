@@ -281,7 +281,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d8676b11fd0d5d49bbe3a3a238d72aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interactSequence: {fileID: 11400000, guid: 1ad00d9f423c96f498e7187adf300424, type: 2}
+  interactSequence: {fileID: 11400000, guid: b9e26f1c2291df649bbc570b65b0f4db, type: 2}
   arrivalDistance: 0.1
   initialItems: []
 --- !u!95 &89606607
@@ -1087,10 +1087,30 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 519420031}
+    - target: {fileID: 6745184490323746995, guid: 022e1406fc2b4244db4115056a0eba3a,
+        type: 3}
+      propertyPath: m_PixelPerfect
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6745184490520725171, guid: 022e1406fc2b4244db4115056a0eba3a,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 30.399994
+      objectReference: {fileID: 0}
     - target: {fileID: 6745184490520725171, guid: 022e1406fc2b4244db4115056a0eba3a,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -71.500015
+      value: 2.7000122
+      objectReference: {fileID: 0}
+    - target: {fileID: 6745184490058902131, guid: 022e1406fc2b4244db4115056a0eba3a,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 18.700012
+      objectReference: {fileID: 0}
+    - target: {fileID: 6745184490058902131, guid: 022e1406fc2b4244db4115056a0eba3a,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 18.700012
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 022e1406fc2b4244db4115056a0eba3a, type: 3}

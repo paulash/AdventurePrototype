@@ -42,7 +42,7 @@ public class InputManager : MonoBehaviour
                         if (sequenceInstance != null)
                             GameInstance.Singleton.SequenceManager.AbortSequence(sequenceInstance);
 
-                        walkSequence.actionStates[0].position = interactionTarget.GetInteractionPosition(controlledActor);
+                        walkSequence.actionStates[0].Set("Position Target", (Vector2)interactionTarget.GetInteractionPosition(controlledActor));
                         sequenceInstance = GameInstance.Singleton.SequenceManager.ActivateSequence(walkSequence);
                     }
                 }
@@ -52,7 +52,7 @@ public class InputManager : MonoBehaviour
                 interactionTarget = null;
                 targetPosition.z = 0;
 
-                walkSequence.actionStates[0].position = targetPosition;
+                walkSequence.actionStates[0].Set("Position Target", (Vector2)targetPosition);
                 if (sequenceInstance != null)
                     GameInstance.Singleton.SequenceManager.AbortSequence(sequenceInstance);
 

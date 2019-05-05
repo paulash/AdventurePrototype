@@ -22,13 +22,77 @@ public class ActionVariable : System.Attribute
 public class ActionVariablePair
 {
     public string name;
-    public object value;
+
+    public int vInt;
+    public float vFloat;
+    public Item vItem;
+    public string vString;
+    public Vector2 vVector2;
+    public bool vBoolean;
+    public Sequence vSequence;
+    public VariableTest vVariableTest;
+
+    public object GetValue()
+    {
+        switch(type)
+        {
+            case ActionVariableType.Item:
+                return vItem;
+            case ActionVariableType.Int:
+                return vInt;
+            case ActionVariableType.Float:
+                return vFloat;
+            case ActionVariableType.String:
+                return vString;
+            case ActionVariableType.Bool:
+                return vBoolean;
+            case ActionVariableType.Vector2:
+                return vVector2;
+            case ActionVariableType.Sequence:
+                return vSequence;
+            case ActionVariableType.VariableTest:
+                return vVariableTest;
+        }
+        return null;
+    }
+
+    public void SetValue(object value)
+    {
+        switch (type)
+        {
+            case ActionVariableType.Item:
+                vItem = (Item)value;
+                return;
+            case ActionVariableType.Int:
+                vInt = (int)value;
+                return;
+            case ActionVariableType.Float:
+                vFloat = (float)value;
+                return;
+            case ActionVariableType.String:
+                vString = (string)value;
+                return;
+            case ActionVariableType.Bool:
+                vBoolean = (bool)value;
+                return;
+            case ActionVariableType.Vector2:
+                vVector2 = (Vector2)value;
+                return;
+            case ActionVariableType.Sequence:
+                vSequence = (Sequence)value;
+                return;
+            case ActionVariableType.VariableTest:
+                vVariableTest = (VariableTest)value;
+                return;
+        }
+    }
+
     public ActionVariableType type;
 }
 
 public enum ActionVariableType
 {
-    Invalid, Vector2, Float, String, Int, Bool, Item
+    Invalid, Vector2, Float, String, Int, Bool, Item, Sequence, VariableTest
 }
 
 public class Action
@@ -48,27 +112,26 @@ public class Action
 }
 
 [System.Serializable]
-public struct SequenceBranch
-{
-    public VariableTest test;
-    public Sequence success;
-    public Sequence failure;
-}
-
-[System.Serializable]
 public class ActionState
 {
-    public string actionClass;
+    protected string actionClass;
     public string targetActorName;
 
-    public Vector3 position;
-    public string text = string.Empty;
-    public Item item = null;
-
-    public float time;
-    public SequenceBranch branch;
-
-    public bool cancelable = false;
+    public string ActionClass
+    {
+        get
+        {
+            return actionClass;
+        }
+        set
+        {
+            if (actionClass != value)
+            {
+                actionClass = value;
+                RefreshVariables();
+            }
+        }
+    }
     public bool yielded = false;
 
     public List<ActionVariablePair> variables = new List<ActionVariablePair>();
@@ -92,40 +155,34 @@ public class ActionState
         return default(ActionVariablePair);
     }
 
+    public T Get<T>(ActionVariable var)
+    {
+        return Get<T>(var.name);
+    }
+
     public T Get<T>(string name)
     {
-        ActionVariablePair pair = GetActionVariableType(name);
-        switch(pair.type)
-        {
-            case ActionVariableType.Item:
-                if (pair.value is Item)
-                    return (T)pair.value;
-                break;
-            case ActionVariableType.Int:
-                if (pair.value is int)
-                    return (T)pair.value;
-                break;
-            case ActionVariableType.String:
-                if (pair.value is string)
-                    return (T)pair.value;
-                break;
-            case ActionVariableType.Float:
-                if (pair.value is float)
-                    return (T)pair.value;
-                break;
-        }
+        if (variables.Count == 0)
+            RefreshVariables();
 
-        return default(T);
+        ActionVariablePair pair = GetActionVariableType(name);
+        if (pair.type == ActionVariableType.Invalid) return default(T);
+        return (T)pair.GetValue();
+    }
+
+    public void Set(ActionVariable var, object value)
+    {
+        Set(var.name, value);
     }
 
     public void Set(string name, object value)
     {
         ActionVariablePair pair = GetActionVariableType(name);
         if (pair.type == ActionVariableType.Invalid) return;
-        pair.value = value;
+        pair.SetValue(value);
     }
 
-    public void InitializeVariables()
+    public void RefreshVariables()
     {
         variables.Clear();
 
@@ -193,7 +250,7 @@ public class ActionState
 [CreateAssetMenu(fileName = "NewSequence", menuName = "Sequence", order = 1)]
 public class Sequence : ScriptableObject
 {
-    public List<ActionState> actionStates;
+    public List<ActionState> actionStates = new List<ActionState>();
 }
 
 public delegate void OnSequenceComplete(SequenceInstance sequence);

@@ -3,42 +3,24 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-[ActionVariable("Time", ActionVariableType.Float)]
-public class DebugAction : Action
-{
-    float timeout = 0;
-
-    public override void OnActivate()
-    {
-        timeout = ActionState.Get<float>("Time") + Time.time;
-        Debug.Log("OnActivate: " + ActionState.text);
-    }
-
-    public override void OnTick()
-    {
-        if (timeout < Time.time)
-        {
-            Debug.Log("Complete: " + ActionState.text);
-            ActionState.Complete();
-        }
-    }
-}
-
+[ActionVariable("Animation", ActionVariableType.String)]
 public class AnimationAction : Action
 {
     AnimatorStateInfo info;
 
     public override void OnActivate()
     {
-        ActionState.targetActor.PlayAnimation(ActionState.text);
+        string animation = ActionState.Get<string>("Animation");
+        ActionState.targetActor.PlayAnimation(animation);
         if (!ActionState.yielded)
             ActionState.Complete();
     }
 
     public override void OnTick()
     {
+        string animation = ActionState.Get<string>("Animation");
         info = ActionState.targetActor.GetAnimatorStateInfo();
-        if (info.IsName(ActionState.text))
+        if (info.IsName(animation))
         {
             if (info.normalizedTime >= 1f || !info.loop)
                 ActionState.Complete();
@@ -46,12 +28,19 @@ public class AnimationAction : Action
     }
 }
 
+[ActionVariable("Variable Test", ActionVariableType.VariableTest)]
+[ActionVariable("Failed Sequence", ActionVariableType.Sequence)]
+[ActionVariable("Success Sequence", ActionVariableType.Sequence)]
 public class VariableBranchAction : Action
 {
     public override void OnActivate()
     {
-        bool isTrue = GameInstance.Singleton.VariableManager.IsVariableTrue(ActionState.branch.test);
-        Sequence branch = isTrue ? ActionState.branch.success : ActionState.branch.failure;
+        VariableTest test = ActionState.Get<VariableTest>("Variable Test");
+        Sequence failedBranch = ActionState.Get<Sequence>("Failed Sequence");
+        Sequence successBranch = ActionState.Get<Sequence>("Success Sequence");
+
+        bool isTrue = GameInstance.Singleton.VariableManager.IsVariableTrue(test);
+        Sequence branch = isTrue ? successBranch : failedBranch;
 
         Debug.Log("BranchAction isTrue: " + isTrue + " branch " + branch.name);
         if (branch != null)
@@ -61,11 +50,18 @@ public class VariableBranchAction : Action
     }
 }
 
+[ActionVariable("Tested Item", ActionVariableType.Item)]
+[ActionVariable("Failed Sequence", ActionVariableType.Sequence)]
+[ActionVariable("Success Sequence", ActionVariableType.Sequence)]
 public class ItemBranchAction : Action
 {
     public override void OnActivate()
     {
-        Sequence branch = (Sequence.interactorCurrentItem == ActionState.item) ? ActionState.branch.success : ActionState.branch.failure;
+        Item item = ActionState.Get<Item>("Tested Item");
+        Sequence failedBranch = ActionState.Get<Sequence>("Failed Sequence");
+        Sequence successBranch = ActionState.Get<Sequence>("Success Sequence");
+
+        Sequence branch = (Sequence.interactorCurrentItem == item) ? successBranch : failedBranch;
         if (branch != null)
             GameInstance.Singleton.SequenceManager.ActivateSequence(branch);
 
@@ -78,34 +74,42 @@ public class AddItemAction : Action
 {
     public override void OnActivate()
     {
-        ActionState.targetActor.AddItem(ActionState.item);
+        Item item = ActionState.Get<Item>("Given Item");
+        ActionState.targetActor.AddItem(item);
         ActionState.Complete();
     }
 }
 
+[ActionVariable("Removed Item", ActionVariableType.Item)]
 public class RemoveItemAction : Action
 {
     public override void OnActivate()
     {
-        ActionState.targetActor.RemoveItem(ActionState.item);
+        Item item = ActionState.Get<Item>("Removed Item");
+        ActionState.targetActor.RemoveItem(item);
         ActionState.Complete();
     }
 }
 
+[ActionVariable("Walk Target", ActionVariableType.String)]
+[ActionVariable("Position Target", ActionVariableType.Vector2)]
 public class WalkAction : Action
 {
     public override void OnActivate()
     {
         ActionState.targetActor.onArrivedLocation += OnArrivedLocation;
 
-        if (ActionState.text != string.Empty)
+        string walkTarget = ActionState.Get<string>("Walk Target");
+        Vector2 position = ActionState.Get<Vector2>("Position Target");
+
+        if (walkTarget != string.Empty)
         {
-            Actor actor = Actor.GetActorByName(ActionState.text);
+            Actor actor = Actor.GetActorByName(walkTarget);
             if (actor != null)
                 ActionState.targetActor.MoveToLocation(actor.transform.position);
         }
         else
-            ActionState.targetActor.MoveToLocation(ActionState.position);
+            ActionState.targetActor.MoveToLocation(position);
 
         ActionState.targetActor.PlayAnimation("walk");
     }
@@ -121,11 +125,13 @@ public class WalkAction : Action
     }
 }
 
+[ActionVariable("Burst Text", ActionVariableType.String)]
 public class BurstTextAction : Action
 {
     public override void OnActivate()
     {
-        BurstText.Spawn(BurstTextStyle.Info, ActionState.targetActor.transform, ActionState.text);
+        string burstText = ActionState.Get<string>("Burst Text");
+        BurstText.Spawn(BurstTextStyle.Info, ActionState.targetActor.transform, burstText);
         ActionState.Complete();
     }
 }
