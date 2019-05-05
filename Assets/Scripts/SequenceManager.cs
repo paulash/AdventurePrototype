@@ -4,59 +4,70 @@ using UnityEngine;
 
 public class SequenceManager : MonoBehaviour
 {
-    public Sequence testSequence;
-    List<Sequence> activeSequences = new List<Sequence>(32);
+    List<SequenceInstance> activeSequences = new List<SequenceInstance>(32);
 
-    Queue<Sequence> addedSequences = new Queue<Sequence>();
-    Queue<Sequence> removedSequences = new Queue<Sequence>();
+    Queue<SequenceInstance> addedSequences = new Queue<SequenceInstance>();
+    Queue<SequenceInstance> removedSequences = new Queue<SequenceInstance>();
 
     // Start is called before the first frame update
     void Start()
     {
-        //testSequence.onSequenceComplete += OnSequenceComplete;
     }
 
-    void OnSequenceComplete(Sequence sequence)
+    void OnSequenceComplete(SequenceInstance sequence)
     {
-        //Debug.Log("OnSequenceComplete: " + sequence.name);
+        removedSequences.Enqueue(sequence);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            ActivateSequence(testSequence);
-        }
-
-        foreach (Sequence sequence in activeSequences)
+        foreach (SequenceInstance sequence in activeSequences)
             sequence.Tick();
-
-        while (removedSequences.Count != 0)
-            activeSequences.Remove(removedSequences.Dequeue());
 
         while (addedSequences.Count != 0)
         {
-            Sequence sequence = addedSequences.Dequeue();
+            SequenceInstance sequence = addedSequences.Dequeue();
 
             activeSequences.Add(sequence);
             sequence.onSequenceComplete += OnSequenceComplete;
             sequence.Start();
         }
+
+        while (removedSequences.Count != 0)
+            activeSequences.Remove(removedSequences.Dequeue());
     }
 
-    public void ActivateSequence(Sequence sequence)
+    public SequenceInstance ActivateSequence(Sequence sequence)
     {
-        /*
-        activeSequences.Add(sequence);
-        sequence.onSequenceComplete += OnSequenceComplete;
-        sequence.Start();
-        */
-        addedSequences.Enqueue(sequence);
+        SequenceInstance instance = new SequenceInstance(sequence);
+        addedSequences.Enqueue(instance);
+        return instance;
     }
 
-    public void AbortSequence(Sequence sequence)
+    public void AbortSequence(SequenceInstance sequence)
     {
+        if (!activeSequences.Contains(sequence))
+            return;
+
         removedSequences.Enqueue(sequence);
+    }
+
+    public int GetEffectingSequences(string name, ref SequenceInstance[] sequences)
+    {
+        if (sequences == null) return 0;
+
+        int index = 0;
+        for (int i=0; i < activeSequences.Count; i++)
+        {
+            if (activeSequences[i].IsEffectingActor(name)) // make a hashset of this too? would make this real fast.
+            {
+                sequences[index++] = activeSequences[i];
+                if (index <= sequences.Length)
+                    break;
+            }
+        }
+
+        return index;
     }
 }

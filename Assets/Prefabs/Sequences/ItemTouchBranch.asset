@@ -10,12 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2624f388d0fca6c4eaf3aab35d07cde9, type: 3}
-  m_Name: Failure
+  m_Name: ItemTouchBranch
   m_EditorClassIdentifier: 
   actionStates:
-  - actionClass: DebugAction
-    targetActor: Was Failure
+  - actionClass: ItemBranchAction
+    targetActorName: 
     position: {x: 0, y: 0, z: 0}
+    text: TouchItem
+    item: {fileID: 11400000, guid: d6c6ede478c06624e9ac4b08c7805407, type: 2}
     time: 0
     branch:
       test:
@@ -23,6 +25,7 @@ MonoBehaviour:
         name: 
         value: 
         isTrue: 0
-      success: {fileID: 0}
-      failure: {fileID: 0}
+      success: {fileID: 11400000, guid: c3a81f9db89635743b013fe0d314319e, type: 2}
+      failure: {fileID: 11400000, guid: 4fb26ba549ad3094494f213dc90f75f7, type: 2}
+    cancelable: 0
     yielded: 0

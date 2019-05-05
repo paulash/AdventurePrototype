@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2624f388d0fca6c4eaf3aab35d07cde9, type: 3}
-  m_Name: Test
+  m_Name: GiveRaygun
   m_EditorClassIdentifier: 
   actionStates:
-  - actionClass: WalkAction
+  - actionClass: AddItemAction
     targetActorName: SpaceDude
-    targetActorAnimation: walk
     position: {x: 0, y: 0, z: 0}
-    text: Woo it works!
+    text: 
+    item: {fileID: 11400000, guid: ae15ed234eecc904da7d61020bd12d70, type: 2}
     time: 0
     branch:
       test:
@@ -27,19 +27,5 @@ MonoBehaviour:
         isTrue: 0
       success: {fileID: 0}
       failure: {fileID: 0}
-    yielded: 1
-  - actionClass: BurstTextAction
-    targetActorName: SpaceDude
-    targetActorAnimation: idle
-    position: {x: 0, y: 0, z: 0}
-    text: I've Arrived!
-    time: 0
-    branch:
-      test:
-        owner: 
-        name: 
-        value: 
-        isTrue: 0
-      success: {fileID: 0}
-      failure: {fileID: 0}
+    cancelable: 0
     yielded: 0
