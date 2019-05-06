@@ -10,32 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2624f388d0fca6c4eaf3aab35d07cde9, type: 3}
-  m_Name: ItemTouchBranch
+  m_Name: test
   m_EditorClassIdentifier: 
   actionStates:
-  - actionClass: ItemBranchAction
+  - actionClass: AnimationAction
     targetActorName: 
     yielded: 0
     variables:
-    - name: Tested Item
-      vInt: 0
-      vFloat: 0
-      vItem: {fileID: 11400000, guid: d6c6ede478c06624e9ac4b08c7805407, type: 2}
-      vString: 
-      vVector2: {x: 0, y: 0}
-      vBoolean: 0
-      vSequence: {fileID: 0}
-      type: 6
-    - name: Success Sequence
-      vInt: 0
-      vFloat: 0
-      vItem: {fileID: 0}
-      vString: 
-      vVector2: {x: 0, y: 0}
-      vBoolean: 0
-      vSequence: {fileID: 11400000, guid: b2202176f04fafa4f8667bc93a8869e5, type: 2}
-      type: 7
-    - name: Failed Sequence
+    - name: Animation
       vInt: 0
       vFloat: 0
       vItem: {fileID: 0}
@@ -43,4 +25,4 @@ MonoBehaviour:
       vVector2: {x: 0, y: 0}
       vBoolean: 0
       vSequence: {fileID: 0}
-      type: 7
+      type: 3

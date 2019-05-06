@@ -9,101 +9,24 @@ public delegate void OnActionComplete(ActionState state);
 public class ActionVariable : System.Attribute
 {
     public string name;
-    public ActionVariableType type;
+    public VariableType type;
 
-    public ActionVariable(string name, ActionVariableType type)
+    public ActionVariable(string name, VariableType type)
     {
         this.name = name;
         this.type = type;
     }
 }
 
-[System.Serializable]
-public class ActionVariablePair
-{
-    public string name;
-
-    public int vInt;
-    public float vFloat;
-    public Item vItem;
-    public string vString;
-    public Vector2 vVector2;
-    public bool vBoolean;
-    public Sequence vSequence;
-    public VariableTest vVariableTest;
-
-    public object GetValue()
-    {
-        switch(type)
-        {
-            case ActionVariableType.Item:
-                return vItem;
-            case ActionVariableType.Int:
-                return vInt;
-            case ActionVariableType.Float:
-                return vFloat;
-            case ActionVariableType.String:
-                return vString;
-            case ActionVariableType.Bool:
-                return vBoolean;
-            case ActionVariableType.Vector2:
-                return vVector2;
-            case ActionVariableType.Sequence:
-                return vSequence;
-            case ActionVariableType.VariableTest:
-                return vVariableTest;
-        }
-        return null;
-    }
-
-    public void SetValue(object value)
-    {
-        switch (type)
-        {
-            case ActionVariableType.Item:
-                vItem = (Item)value;
-                return;
-            case ActionVariableType.Int:
-                vInt = (int)value;
-                return;
-            case ActionVariableType.Float:
-                vFloat = (float)value;
-                return;
-            case ActionVariableType.String:
-                vString = (string)value;
-                return;
-            case ActionVariableType.Bool:
-                vBoolean = (bool)value;
-                return;
-            case ActionVariableType.Vector2:
-                vVector2 = (Vector2)value;
-                return;
-            case ActionVariableType.Sequence:
-                vSequence = (Sequence)value;
-                return;
-            case ActionVariableType.VariableTest:
-                vVariableTest = (VariableTest)value;
-                return;
-        }
-    }
-
-    public ActionVariableType type;
-}
-
-public enum ActionVariableType
-{
-    Invalid, Vector2, Float, String, Int, Bool, Item, Sequence, VariableTest
-}
-
 public class Action
 {
     public SequenceInstance Sequence { get; private set; }
-    public ActionState ActionState { get; private set; }
+    public ActionState State { get; private set; }
 
     public void Init(SequenceInstance sequence, ActionState actionState)
     {
         Sequence = sequence;
-        ActionState = actionState;
+        State = actionState;
     }
 
     public virtual void OnActivate() { }
@@ -114,7 +37,10 @@ public class Action
 [System.Serializable]
 public class ActionState
 {
+    [SerializeField]
     protected string actionClass;
+
+    [SerializeField]
     public string targetActorName;
 
     public string ActionClass
@@ -132,9 +58,12 @@ public class ActionState
             }
         }
     }
+
+    [SerializeField]
     public bool yielded = false;
 
-    public List<ActionVariablePair> variables = new List<ActionVariablePair>();
+    [SerializeField]
+    public List<VariablePair> variables = new List<VariablePair>();
 
     [System.NonSerialized]
     public OnActionComplete onActionComplete;
@@ -144,7 +73,7 @@ public class ActionState
 
     public Actor targetActor { get; private set; }
 
-    public ActionVariablePair GetActionVariableType(string name)
+    public VariablePair GetActionVariableType(string name)
     {
         for (int i=0; i < variables.Count; i++)
         {
@@ -152,7 +81,7 @@ public class ActionState
                 return variables[i];
         }
 
-        return default(ActionVariablePair);
+        return default(VariablePair);
     }
 
     public T Get<T>(ActionVariable var)
@@ -165,8 +94,8 @@ public class ActionState
         if (variables.Count == 0)
             RefreshVariables();
 
-        ActionVariablePair pair = GetActionVariableType(name);
-        if (pair.type == ActionVariableType.Invalid) return default(T);
+        VariablePair pair = GetActionVariableType(name);
+        if (pair.type == VariableType.Invalid) return default(T);
         return (T)pair.GetValue();
     }
 
@@ -177,9 +106,10 @@ public class ActionState
 
     public void Set(string name, object value)
     {
-        ActionVariablePair pair = GetActionVariableType(name);
-        if (pair.type == ActionVariableType.Invalid) return;
+        VariablePair pair = GetActionVariableType(name);
+        if (pair == null || pair.type == VariableType.Invalid) return;
         pair.SetValue(value);
+
     }
 
     public void RefreshVariables()
@@ -190,7 +120,7 @@ public class ActionState
         IEnumerable<ActionVariable> actionVars = actionType.GetCustomAttributes<ActionVariable>();
         foreach (ActionVariable var in actionVars)
         {
-            variables.Add(new ActionVariablePair()
+            variables.Add(new VariablePair()
             {
                 name = var.name,
                 type = var.type

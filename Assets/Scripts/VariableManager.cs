@@ -3,61 +3,152 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
+[System.Serializable]
+public class VariablePair
+{
+    public string name;
+
+    public int vInt;
+    public float vFloat;
+    public Item vItem;
+    public string vString;
+    public Vector2 vVector2;
+    public bool vBoolean;
+    public Sequence vSequence;
+
+    public object GetValue()
+    {
+        switch (type)
+        {
+            case VariableType.Item:
+                return vItem;
+            case VariableType.Int:
+                return vInt;
+            case VariableType.Float:
+                return vFloat;
+            case VariableType.String:
+                return vString;
+            case VariableType.Bool:
+                return vBoolean;
+            case VariableType.Vector2:
+                return vVector2;
+            case VariableType.Sequence:
+                return vSequence;
+        }
+        return null;
+    }
+
+    public void SetValue(object value)
+    {
+        switch (type)
+        {
+            case VariableType.Item:
+                vItem = (Item)value;
+                return;
+            case VariableType.Int:
+                vInt = (int)value;
+                return;
+            case VariableType.Float:
+                vFloat = (float)value;
+                return;
+            case VariableType.String:
+                vString = (string)value;
+                return;
+            case VariableType.Bool:
+                vBoolean = (bool)value;
+                return;
+            case VariableType.Vector2:
+                vVector2 = (Vector2)value;
+                return;
+            case VariableType.Sequence:
+                vSequence = (Sequence)value;
+                return;
+        }
+    }
+
+    public VariableType type;
+}
+
 public enum VariableType
 {
-    None,
-    String
+    Invalid, Vector2, Float, String, Int, Bool, Item, Sequence, VariableTest
 }
 
 [System.Serializable]
-public struct VariableTest
+public class VariableGroup
 {
-    public string owner;
+    [SerializeField]
     public string name;
-    public string value;
-    public bool isTrue;
-}
 
-[System.Serializable]
-public struct Variable
-{
-    public VariableType type;
-    public string value;
+    [SerializeField]
+    public List<VariablePair> variables = new List<VariablePair>();
 
-    static public Variable Invalid = new Variable() { type = VariableType.None };
+    public VariablePair GetPairByName(string name)
+    {
+        for (int i=0; i < variables.Count; i++)
+        {
+            if (variables[i].name == name)
+                return variables[i];
+        }
+        return null;
+    }
 }
 
 public class VariableManager : MonoBehaviour
 {
-    //Dictionary<string, Dictionary<string, Variable>> variables = new Dictionary<string, Dictionary<string, Variable>>();
-
+    List<VariableGroup> variables = new List<VariableGroup>();
 
     void Awake()
     {
-        // load saved variables into dictionary.
-        //Dictionary<string, Variable> ownerVar = new Dictionary<string, Variable>();
-        //ownerVar.Add("test_v", new Variable() { type = VariableType.String, value = "yes" });
-        //variables.Add("test", ownerVar);
-
+        variables.Add(new VariableGroup() { name = "Global", variables = new List<VariablePair>() });
     }
 
-    public Variable GetVariable(string owner, string name)
+    public VariableGroup GetVariableSetByName(string owner)
     {
-        /*
-        Dictionary<string, Variable> ownerSet = null;
-        if (variables.TryGetValue(owner, out ownerSet))
+        for (int i=0; i < variables.Count; i++)
         {
-            Variable variable = new Variable();
-            if (ownerSet.TryGetValue(name, out variable))
-                return variable;
+            if (variables[i].name == owner)
+                return variables[i];
         }
-        */
-        return Variable.Invalid;
+        return null;
     }
 
-    public bool IsVariableTrue(VariableTest test)
+    public T Get<T>(string owner, string name)
     {
-        Variable variable = GetVariable(test.owner, test.name);
-        return test.isTrue ? variable.value == test.value : variable.value != test.value;
+        VariableGroup set = GetVariableSetByName(owner);
+        if (set == null) return default(T);
+        VariablePair pair = set.GetPairByName(name);
+        if (pair == null) return default(T);
+
+        return (T)pair.GetValue();
+    }
+
+    public void Set(string groupName, string variableName, object value)
+    {
+        VariableGroup set = GetVariableSetByName(groupName);
+        if (set == null) return;
+        VariablePair pair = set.GetPairByName(variableName);
+        if (pair == null) return;
+        pair.SetValue(value);
+    }
+
+    public void CreateGroup(string groupName)
+    {
+
+    }
+
+    public void CreateGroupVariable(string groupName, string variableName, VariableType variableType)
+    {
+
+    }
+
+    public void RemoveGroup(string groupName)
+    {
+
+    }
+
+    public void RemoveGroupVariable(string groupName, string variableName)
+    {
+
     }
 }

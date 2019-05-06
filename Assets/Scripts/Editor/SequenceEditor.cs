@@ -105,7 +105,7 @@ public class SequenceEditor : Editor
                     GUILayout.EndHorizontal();
 
                     ActionState state = targetSequence.actionStates[i];
-                    state.ActionClass = GetActionName(EditorGUILayout.Popup(GetActionIndex(state.ActionClass), actionClassNames));
+                    state.ActionClass = GetActionName(EditorGUILayout.Popup("Action", GetActionIndex(state.ActionClass), actionClassNames));
                     state.targetActorName = EditorGUILayout.TextField("Target Actor Name", state.targetActorName);
 
 
@@ -120,19 +120,19 @@ public class SequenceEditor : Editor
                                 ActionVariable variable = variables[v];
                                 switch (variable.type)
                                 {
-                                    case ActionVariableType.Item:
+                                    case VariableType.Item:
                                         state.Set(variable, EditorGUILayout.ObjectField(variable.name, state.Get<Item>(variable), typeof(Item), false));
                                         break;
-                                    case ActionVariableType.Sequence:
+                                    case VariableType.Sequence:
                                         state.Set(variable, EditorGUILayout.ObjectField(variable.name, state.Get<Sequence>(variable), typeof(Sequence), false));
                                         break;
-                                    case ActionVariableType.Float:
+                                    case VariableType.Float:
                                         state.Set(variable, EditorGUILayout.FloatField(variable.name, state.Get<float>(variable)));
                                         break;
-                                    case ActionVariableType.String:
+                                    case VariableType.String:
                                         state.Set(variable, EditorGUILayout.TextField(variable.name, state.Get<string>(variable)));
                                         break;
-                                    case ActionVariableType.Vector2:
+                                    case VariableType.Vector2:
                                         state.Set(variable, EditorGUILayout.Vector2Field(variable.name, state.Get<Vector2>(variable)));
                                         break;
                                 }
@@ -151,13 +151,9 @@ public class SequenceEditor : Editor
                 targetSequence.actionStates.Insert(insertState.Pop(), new ActionState());
 
             if (GUI.changed)
-            {
-                string path = AssetDatabase.GetAssetPath(targetSequence);
-                AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
-            }
+                EditorUtility.SetDirty(targetSequence);
         }
         GUILayout.EndVertical();
-
         DrawDefaultInspector();
     }
 }
