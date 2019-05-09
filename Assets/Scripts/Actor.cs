@@ -173,10 +173,7 @@ public class Actor : MonoBehaviour, IInteractable
     public void DoInteract(Actor interactor)
     {
         if (interactSequence != null)
-        {
-            SequenceInstance interactionInstance =  GameInstance.Singleton.SequenceManager.ActivateSequence(interactSequence);
-            interactionInstance.interactorCurrentItem = interactor.EquippedItem;
-        }
+             GameInstance.Singleton.SequenceManager.ActivateSequence(interactSequence);
     }
 
     public Vector2 GetInteractionPosition(Actor interactor)

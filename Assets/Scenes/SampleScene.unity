@@ -1087,30 +1087,5 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 519420031}
-    - target: {fileID: 6745184490323746995, guid: 022e1406fc2b4244db4115056a0eba3a,
-        type: 3}
-      propertyPath: m_PixelPerfect
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6745184490520725171, guid: 022e1406fc2b4244db4115056a0eba3a,
-        type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 30.399994
-      objectReference: {fileID: 0}
-    - target: {fileID: 6745184490520725171, guid: 022e1406fc2b4244db4115056a0eba3a,
-        type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 2.7000122
-      objectReference: {fileID: 0}
-    - target: {fileID: 6745184490058902131, guid: 022e1406fc2b4244db4115056a0eba3a,
-        type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 18.700012
-      objectReference: {fileID: 0}
-    - target: {fileID: 6745184490058902131, guid: 022e1406fc2b4244db4115056a0eba3a,
-        type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 18.700012
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 022e1406fc2b4244db4115056a0eba3a, type: 3}

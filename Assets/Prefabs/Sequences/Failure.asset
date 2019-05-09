@@ -13,18 +13,16 @@ MonoBehaviour:
   m_Name: Failure
   m_EditorClassIdentifier: 
   actionStates:
-  - actionClass: DebugAction
-    targetActorName: 
-    position: {x: 0, y: 0, z: 0}
-    text: FAILURE BRANCH
-    time: 0
-    branch:
-      test:
-        owner: 
-        name: 
-        value: 
-        isTrue: 0
-      success: {fileID: 0}
-      failure: {fileID: 0}
-    cancelable: 0
+  - actionClass: BurstTextAction
+    targetActorName: SpaceDudeNPC
     yielded: 0
+    variables:
+    - name: Burst Text
+      vInt: 0
+      vFloat: 0
+      vItem: {fileID: 0}
+      vString: Already Have
+      vVector2: {x: 0, y: 0}
+      vBoolean: 0
+      vSequence: {fileID: 0}
+      type: 3

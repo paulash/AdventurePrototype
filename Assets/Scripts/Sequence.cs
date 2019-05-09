@@ -188,8 +188,6 @@ public delegate void OnSequenceComplete(SequenceInstance sequence);
 public class SequenceInstance
 {
     public OnSequenceComplete onSequenceComplete;
-    public Item interactorCurrentItem = null;
-
     public Sequence Sequence { get; private set; }
 
     ActionState yieldedAction;
