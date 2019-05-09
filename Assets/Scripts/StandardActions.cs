@@ -90,6 +90,18 @@ public class HasItemBranchAction : Action
     }
 }
 
+[ActionVariable("Equip Item", VariableType.Item)]
+public class EquipItemAction : Action
+{
+    public override void OnActivate()
+    {
+        Item item = State.Get<Item>("Equip Item");
+        State.targetActor.EquipItem(item);
+        State.Complete();
+    }
+}
+
+
 [ActionVariable("Given Item", VariableType.Item)]
 public class AddItemAction : Action
 {
