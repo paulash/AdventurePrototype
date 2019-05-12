@@ -9,11 +9,11 @@ public class SPPPointerHandler : MonoBehaviour, IPointerEnterHandler, IPointerEx
 
     public void OnPointerEnter(UnityEngine.EventSystems.PointerEventData eventData)
     {
-        target.SendMessage("OnPointerEnter", eventData);
+        target.SendMessage("OnPointerEnter", eventData, SendMessageOptions.DontRequireReceiver);
     }
 
     public void OnPointerExit(UnityEngine.EventSystems.PointerEventData eventData)
     {
-        target.SendMessage("OnPointerExit", eventData);
+        target.SendMessage("OnPointerExit", eventData, SendMessageOptions.DontRequireReceiver);
     }
 }

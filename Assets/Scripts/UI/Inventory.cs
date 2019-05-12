@@ -2,23 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
-
-public struct ItemRef
-{
-    public Item item;
-    public GameObject panel;
-}
+using UnityEngine.EventSystems;
 
 public class Inventory : MonoBehaviour
 {
     public Image equippedItemImage;
     public GameObject inventoryPanel;
+    public GameObject inventoryContainer;
     public GameObject itemPrefab;
 
     Actor controlledActor;
 
-    List<ItemRef> itemRefs = new List<ItemRef>();
+    Dictionary<string, GameObject> itemRefs = new Dictionary<string, GameObject>();
 
     // Start is called before the first frame update
     void Start()
@@ -34,7 +29,11 @@ public class Inventory : MonoBehaviour
 
     public void OnSelectItem(Item item)
     {
-        if (controlledActor != null)
+        if (controlledActor.EquippedItem == item) return;
+
+        if (controlledActor.EquippedItem.dropSequence != null)
+            GameInstance.Singleton.InputManager.TryCombined(controlledActor.EquippedItem, item);
+        else
             controlledActor.EquipItem(item);
     }
 
@@ -69,21 +68,32 @@ public class Inventory : MonoBehaviour
 
     void OnItemAdded(Item item)
     {
-        GameObject itemPanel = GameObject.Instantiate(itemPrefab, inventoryPanel.transform);
+        GameObject itemPanel = GameObject.Instantiate(itemPrefab, inventoryContainer.transform);
         itemPanel.GetComponent<Button>().onClick.AddListener(() => OnSelectItem(item));
         itemPanel.GetComponent<Image>().sprite = item.icon;
 
-        itemRefs.Add(new ItemRef() { item = item, panel = itemPanel });
+        itemRefs.Add(item.name, itemPanel);
     }
 
     void OnItemRemoved(Item item)
     {
-
+        GameObject itemPanel = null;
+        if (itemRefs.TryGetValue(item.name, out itemPanel))
+        {
+            GameObject.Destroy(itemPanel);
+            itemRefs.Remove(item.name);
+        }
     }
 
     void OnItemEquipped(Item item)
     {
         equippedItemImage.sprite = item.icon;
-        inventoryPanel.SetActive(false);
+        Cursor.SetCursor(item.icon.texture, Vector2.zero, CursorMode.ForceSoftware);
+    }
+
+    void OnPointerExit(PointerEventData eventData)
+    {
+        if (eventData.IsPointerMoving())
+            inventoryPanel.SetActive(false);
     }
 }

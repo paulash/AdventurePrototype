@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e1c2984597f32f840a826d56b0f98d03, type: 3}
-  m_Name: RaygunItem
+  m_Name: RaygunDeadItem
   m_EditorClassIdentifier: 
-  icon: {fileID: 21300000, guid: 9e20aad1a10b5864490d9a5109448de4, type: 3}
+  icon: {fileID: 21300000, guid: 38a7f864b0033b14591c175cbfd93e41, type: 3}
   displayName: Raygun
   displayDescription: 
-  dropSequence: {fileID: 0}
+  dropSequence: {fileID: 11400000, guid: a639e13fa95f0404ea3819d7b609f6a9, type: 2}

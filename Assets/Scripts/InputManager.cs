@@ -5,6 +5,8 @@ using UnityEngine;
 public class InputManager : MonoBehaviour
 {
     public Sequence walkSequence;
+    public Sequence combinedSequence;
+
     Actor controlledActor;
 
     IInteractable interactionTarget = null;
@@ -61,6 +63,19 @@ public class InputManager : MonoBehaviour
         }
     }
 
+    public void TryCombined(Item sourceItem, Item targetItem)
+    {
+        if (sourceItem.dropSequence == null) return;
+        ActionState combinedState = sourceItem.dropSequence.actionStates[0];
+
+        combinedState.targetActorName = controlledActor.name;
+
+        if (combinedState.Get<Item>("Source Item") != sourceItem || combinedState.Get<Item>("Target Item") != targetItem)
+            return;
+
+        GameInstance.Singleton.SequenceManager.ActivateSequence(sourceItem.dropSequence);
+    }
+
     void OnWalkComplete(ActionState walkState)
     {
         if (interactionTarget != null)
@@ -82,6 +97,8 @@ public class InputManager : MonoBehaviour
         {
             walkSequence.actionStates[0].targetActorName = controlledActor.name;
             walkSequence.actionStates[0].onActionComplete += OnWalkComplete;
+
+            controlledActor.Possess();
         }
     }
 

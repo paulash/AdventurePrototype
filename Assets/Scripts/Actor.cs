@@ -64,6 +64,12 @@ public class Actor : MonoBehaviour, IInteractable
             EquipItem(inventory[0]);
     }
 
+    public void Possess()
+    {
+        if (onItemEquipped != null)
+            onItemEquipped(EquippedItem);
+    }
+
     public void OnDestroy()
     {
         activeActors.Remove(this);
@@ -151,6 +157,9 @@ public class Actor : MonoBehaviour, IInteractable
         inventory.Remove(itemName);
         if (onItemRemoved != null)
             onItemRemoved(itemName);
+
+        if (EquippedItem == itemName)
+            EquipItem(inventory[0]);
 
         return true;
     }

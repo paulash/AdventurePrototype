@@ -101,6 +101,27 @@ public class EquipItemAction : Action
     }
 }
 
+[ActionVariable("Source Item", VariableType.Item)]
+[ActionVariable("Target Item", VariableType.Item)]
+[ActionVariable("Result Item", VariableType.Item)]
+public class CombinedItemAction : Action
+{
+    public override void OnActivate()
+    {
+        Item sourceItem = State.Get<Item>("Source Item");
+        Item targetItem = State.Get<Item>("Target Item");
+        Item resultItem = State.Get<Item>("Result Item");
+
+        if (State.targetActor.HasItem(sourceItem) && State.targetActor.HasItem(targetItem))
+        {
+            State.targetActor.RemoveItem(sourceItem);
+            State.targetActor.RemoveItem(targetItem);
+            State.targetActor.AddItem(resultItem);
+        }
+
+        State.Complete();
+    }
+}
 
 [ActionVariable("Given Item", VariableType.Item)]
 public class AddItemAction : Action

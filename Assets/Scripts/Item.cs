@@ -8,4 +8,6 @@ public class Item : ScriptableObject
     public Sprite icon;
     public string displayName;
     public string displayDescription;
+
+    public Sequence dropSequence;
 }
